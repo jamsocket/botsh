@@ -1,4 +1,4 @@
-from botsh.task_driver import CommandExecution
+from botsh.history import CommandExecution
 from jinja2 import Environment, PackageLoader
 
 ENV = Environment(loader=PackageLoader("botsh", "templates"))

@@ -2,16 +2,8 @@ import openai
 from termcolor import colored
 
 from botsh.docker_exec import DockerContainer
-
-class CommandExecution:
-    explanation: str
-    command: str
-    result: str
-
-    def __init__(self, explanation: str, command: str, result: str):
-        self.explanation = explanation
-        self.command = command
-        self.result = result
+from botsh.prompt import generate_prompt
+from botsh.history import CommandExecution
 
 
 class TaskDriver:
@@ -19,9 +11,9 @@ class TaskDriver:
     task: str
     container: DockerContainer
 
-    def __init__(self, task: str):
+    def __init__(self, task: str, wipe: bool = False):
         self.task = task
-        self.container = DockerContainer("ubuntu:latest")
+        self.container = DockerContainer("ubuntu:latest", wipe)
         print(colored("Updating apt-get...", "green"))
         self.container.run_command("apt-get -qq update")
         self.history = list()
@@ -44,7 +36,7 @@ class TaskDriver:
         return result
 
     def step(self):
-        prompt = self.construct_prompt()
+        prompt = generate_prompt(self.task, self.history)
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=prompt,
