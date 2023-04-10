@@ -15,15 +15,6 @@ The AI is explicitly told that it is allowed to install software,
 and will typically install programs as needed to complete its task.
 Installed software remains confined to the container.
 
-When `botsh` is invoked, the current working directory is mounted
-into the container and can be modified by programs the agent runs.
-The filesystem outside of the current working directory is sealed
-off from the container.
-
-Each directory that you run `botsh` in will get its own container,
-which is reused for future invocations of `botsh` in that container.
-You can tell it to wipe 
-
 ## Setup
 
 Install with:
@@ -51,6 +42,23 @@ These observations relate to the default model, `text-davinci-003`. Using GPT-4 
   It is not good at figuring out what you mean.
 - It often gets stuck in loops if it can't complete a task rather than giving up, despite the prompt
   telling it not to.
+
+## Container re-use
+
+When `botsh` is invoked, the current working directory is mounted
+into the container and can be modified by programs the agent runs.
+The filesystem outside of the current working directory is sealed
+off from the container.
+
+Each directory that you run `botsh` in will get its own container,
+which is reused for future invocations of `botsh` in that container.
+
+You can pass `--wipe` to discard the existing container and start a
+new one before running your task. You can also pass `--rm` to remove
+a container at the end of your task.
+
+Containers are also removed if you purge containers in Docker with
+`docker container prune`
 
 ## Usage
 
