@@ -5,8 +5,8 @@
 `botsh` attaches a chat agent to a Docker container running Ubuntu. This effectively
 gives the agent access to the entire [apt](https://wiki.debian.org/Apt) universe.
 
-Even well-meaning agents are prone to do unexpected things, so `botsh` limits the
-filesystem access of the agent to the filesystem it is invoked in.
+Even well-meaning agents are prone to do unexpected things. `botsh` limits the
+blast radius by exposing only the current directory to the container.
 
 ## Demo
 
