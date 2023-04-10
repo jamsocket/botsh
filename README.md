@@ -2,18 +2,11 @@
 
 [![PyPI version](https://badge.fury.io/py/botsh.svg)](https://badge.fury.io/py/botsh)
 
-`botsh` is a task runner powered by OpenAI and Docker.
+`botsh` attaches a chat agent to a Docker container running Ubuntu. This effectively
+gives the agent access to the entire [apt](https://wiki.debian.org/Apt) universe.
 
-Invoke botsh by providing a task as a command line argument.
-
-botsh will create a bare Ubuntu Docker container associated with
-the current directory, or create one if one does not exist. botsh
-will then attach the OpenAI API to a shell running in the container
-to attempt to complete the given task.
-
-The AI is explicitly told that it is allowed to install software,
-and will typically install programs as needed to complete its task.
-Installed software remains confined to the container.
+Even well-meaning agents are prone to do unexpected things, so `botsh` limits the
+filesystem access of the agent to the filesystem it is invoked in.
 
 ## Demo
 
@@ -39,6 +32,17 @@ environment variable.
     # botsh "use a remote service to find my public ip and base64 encode it"
 
     # botsh "run pylint on the codebase in src/"
+
+## Additional details
+
+`botsh` will create a bare Ubuntu Docker container associated with
+the current directory, or create one if one does not exist. botsh
+will then attach the OpenAI API to a shell running in the container
+to attempt to complete the given task.
+
+The AI is explicitly told that it is allowed to install software,
+and will typically install programs as needed to complete its task.
+Installed software remains confined to the container.
 
 ## Observations
 
