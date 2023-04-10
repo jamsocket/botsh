@@ -18,6 +18,8 @@ into the container and can be modified by programs the agent runs.
 The filesystem outside of the current working directory is sealed
 off from the container.
 
+
+
 ## Setup
 
 `botsh` expects an OpenAI API key to be provided as the `OPENAI_API_KEY`
@@ -30,3 +32,14 @@ environment variable.
     # botsh "convert cat.jpg into a png file"
 
     # botsh "use a remote service to find my public ip and base64 encode it"
+
+    # botsh "run pylint on the codebase in src/"
+
+## Observations
+
+These observations relate to the default model, `text-davinci-003`. Using GPT-4 may improve things.
+
+- It works best if you explicitly specify the files/paths you want to work with (use relative references).
+  It is not good at figuring out what you mean.
+- It often gets stuck in loops if it can't complete a task rather than giving up, despite the prompt
+  telling it not to.

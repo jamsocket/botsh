@@ -22,7 +22,7 @@ class DockerContainer:
         log.info("Connecting to Docker...")
         self.client = docker.from_env()
 
-        self.container = self._get_container(container_name, image, wipe)
+        self._get_container(container_name, image, wipe)
 
     def _get_mounts(self) -> list[Mount]:
         mount = Mount(target="/work", source=self.current_directory, type="bind")
@@ -64,8 +64,8 @@ class DockerContainer:
         log.info("Starting container...")
         container.start()
         log.info("Updating apt-get...")
-        self.container.run_command("apt-get -qq update")
-        return container
+        self.container = container
+        self.run_command("apt-get -qq update")
 
     def run_command(self, command: str, quiet: bool = False) -> tuple[int, str]:
         quoted_command = shlex.quote(command)
