@@ -22,17 +22,20 @@ def load_requirements_from_pipfile_lock(dev: bool):
 
 setup(
     name="botsh",
-    version="0.1.0",
-    description="A short description of your package",
+    version="0.1.1",
+    description="A task runner powered by OpenAI and Docker.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Your Name",
-    author_email="your.email@example.com",
-    url="https://github.com/yourusername/your-package-name",
+    author="Paul Butler",
+    author_email="paul@driftingin.space",
+    url="https://github.com/drifting-in-space/botsh",
     packages=find_packages("src"),
+    package_data={
+        "": ["Pipfile", "Pipfile.lock"],
+    },
+    include_package_data=True,
     package_dir={"": "src"},
     classifiers=[
-        "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",

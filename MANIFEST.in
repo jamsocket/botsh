@@ -1,0 +1,2 @@
+include src/botsh/templates/*.jinja2
+include Pipfile*
