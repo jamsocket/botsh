@@ -144,7 +144,7 @@ def main():
 
     task_runner = TaskDriver(args.prompt)
 
-    for i in range(10):
+    for _ in range(10):
         result = task_runner.step()
         if result:
             break
