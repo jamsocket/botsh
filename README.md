@@ -2,11 +2,10 @@
 
 [![PyPI version](https://badge.fury.io/py/botsh.svg)](https://badge.fury.io/py/botsh)
 
-`botsh` attaches a chat agent to a Docker container running Ubuntu. This effectively
-gives the agent access to the entire [apt](https://wiki.debian.org/Apt) universe.
+`botsh` attaches a chat agent to a Docker container running Ubuntu.
 
-Even well-meaning agents are prone to do unexpected things. `botsh` limits the
-blast radius by exposing only the current directory to the container.
+This effectively gives the agent access to the entire [apt](https://wiki.debian.org/Apt)
+universe, while limiting it’s blast radius to the current directory.
 
 ## Demo
 
