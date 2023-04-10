@@ -12,8 +12,12 @@ from botsh.logging import log
 class DockerContainer:
     current_directory: str
     shell_command: str
+    remove_on_exit: bool
 
-    def __init__(self, image: str, shell_command: str, wipe: bool):
+    def __init__(
+        self, image: str, shell_command: str, wipe: bool, remove_on_exit: bool
+    ):
+        self.remove_on_exit = remove_on_exit
         self.current_directory = os.getcwd()
         self.shell_command = shell_command
         dir_hash = hashlib.sha256(self.current_directory.encode("utf-8")).hexdigest()
@@ -38,14 +42,14 @@ class DockerContainer:
                 if container.status != "running":
                     log.info("Starting container...")
                     container.start()
-                return container
+                self.container = container
+                return
             else:
                 log.info("Terminating existing container.")
                 container.stop(timeout=0)
                 container.remove(force=True)
         except docker.errors.NotFound:
             log.info("No container exists, creating one.")
-            pass
 
         log.info("Pulling image...")
         self.client.images.pull(image)
@@ -94,4 +98,6 @@ class DockerContainer:
         if hasattr(self, "container"):
             log.info("Terminating container.")
             self.container.stop(timeout=0)
-            # self.container.remove()
+            if self.remove_on_exit:
+                log.info("Removing container.")
+                self.container.remove()

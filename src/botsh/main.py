@@ -45,6 +45,11 @@ def main():
         action="store_true",
         help="Start with a fresh container even if one exists for this directory.",
     )
+    parser.add_argument(
+        "--rm",
+        action="store_true",
+        help="Remove the container after the task is complete.",
+    )
     args = parser.parse_args()
 
     if "OPENAI_API_KEY" not in environ:
@@ -55,7 +60,9 @@ def main():
         return
 
     llm = LLM(args.model, save_transcript=args.save_transcript)
-    container = DockerContainer(args.image, args.shell_command, wipe=args.wipe)
+    container = DockerContainer(
+        args.image, args.shell_command, wipe=args.wipe, remove_on_exit=args.rm
+    )
     task_runner = TaskDriver(args.prompt, container, llm)
 
     try:
