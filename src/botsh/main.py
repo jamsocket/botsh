@@ -1,14 +1,15 @@
 import argparse
 
 from botsh.task_driver import TaskDriver
-
+from botsh.llm import LLM
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("prompt", help="Prompt to execute.")
     args = parser.parse_args()
 
-    task_runner = TaskDriver(args.prompt)
+    llm = LLM(save_transcript=True)
+    task_runner = TaskDriver(args.prompt, llm)
 
     for _ in range(10):
         result = task_runner.step()

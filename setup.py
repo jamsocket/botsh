@@ -21,7 +21,7 @@ def load_requirements_from_pipfile_lock(dev: bool):
 
 
 setup(
-    name="your-package-name",
+    name="botsh",
     version="0.1.0",
     description="A short description of your package",
     long_description=long_description,
