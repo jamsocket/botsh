@@ -7,6 +7,7 @@ name = "pypi"
 docker = "*"
 openai = "*"
 termcolor = "*"
+jinja2 = "*"
 
 [dev-packages]
 black = "*"
