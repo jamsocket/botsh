@@ -37,6 +37,9 @@ def main():
         default="/bin/bash",
         help="Shell to invoke within the container.",
     )
+    parser.add_argument(
+        "--save-transcript", action="store_true", help="Save transcript to file"
+    )
     args = parser.parse_args()
 
     if "OPENAI_API_KEY" not in environ:
@@ -46,20 +49,26 @@ def main():
         )
         return
 
-    llm = LLM(args.model, save_transcript=True)
+    llm = LLM(args.model, save_transcript=args.save_transcript)
     container = DockerContainer(args.image, args.shell_command, wipe=False)
     task_runner = TaskDriver(args.prompt, container, llm)
 
-    for _ in range(args.max_rounds):
-        result = task_runner.step()
-        if result:
-            break
-    else:
-        log.warning(
-            f"Task did not complete, stopped after exhausting {args.max_rounds} rounds."
-            " Usually this means it got stuck, but you can try passing a higher "
-            "value to --max-rounds."
-        )
+    try:
+        for _ in range(args.max_rounds):
+            result = task_runner.step()
+            if result:
+                break
+        else:
+            log.warning(
+                "Task did not complete, stopped after reaching its round limit. "
+                "Usually this means it got stuck, but you can try passing a higher "
+                "value to --max-rounds.",
+                max_rounds=args.max_rounds,
+            )
+    except KeyboardInterrupt:
+        log.warning("Task interrupted by user.")
+    except EOFError:
+        log.warning("Task interrupted by user.")
 
 
 if __name__ == "__main__":

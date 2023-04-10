@@ -43,10 +43,15 @@ class TaskDriver:
         command = result.get("COMMAND", "")
         explanation = result.get("EXPLANATION", "")
 
-        log.info("AI responded.", command=command, explanation=explanation)
         if command == "":
-            log.info("Task completed")
+            log.info(
+                "Agent indicated that the task is complete.", explanation=explanation
+            )
             return True
+        else:
+            log.info(
+                "Agent requested a command.", command=command, explanation=explanation
+            )
 
         exit_code, output = self.container.run_command(command)
         lines = output.splitlines()
