@@ -2,3 +2,4 @@ output
 __pycache__
 transcripts
 *.egg-info
+dist

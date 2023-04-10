@@ -12,6 +12,7 @@ structlog = "*"
 
 [dev-packages]
 black = "*"
+twine = "*"
 
 [requires]
 python_version = "3.10"

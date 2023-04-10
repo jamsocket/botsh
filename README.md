@@ -1,5 +1,7 @@
 # `botsh`
 
+[![PyPI version](https://badge.fury.io/py/botsh.svg)](https://badge.fury.io/py/botsh)
+
 `botsh` is a task runner powered by OpenAI and Docker.
 
 Invoke botsh by providing a task as a command line argument.
@@ -23,6 +25,10 @@ which is reused for future invocations of `botsh` in that container.
 You can tell it to wipe 
 
 ## Setup
+
+Install with:
+
+    pip install botsh
 
 `botsh` expects an OpenAI API key to be provided as the `OPENAI_API_KEY`
 environment variable.
