@@ -11,9 +11,11 @@ from botsh.logging import log
 
 class DockerContainer:
     current_directory: str
+    shell_command: str
 
-    def __init__(self, image, wipe: bool):
+    def __init__(self, image: str, shell_command: str, wipe: bool):
         self.current_directory = os.getcwd()
+        self.shell_command = shell_command
         dir_hash = hashlib.sha256(self.current_directory.encode("utf-8")).hexdigest()
         container_name = f"botsh-{dir_hash}"
 
@@ -54,7 +56,7 @@ class DockerContainer:
         container = self.client.containers.create(
             image,
             name=container_name,
-            command="/bin/bash",
+            command=self.shell_command,
             tty=True,
             mounts=mounts,
             environment=["DEBIAN_FRONTEND=noninteractive"],
@@ -69,7 +71,9 @@ class DockerContainer:
         quoted_command = shlex.quote(command)
 
         exec = self.client.api.exec_create(
-            self.container.id, f"bash -c {quoted_command}", workdir="/work"
+            self.container.id,
+            f"{self.shell_command} -c {quoted_command}",
+            workdir="/work",
         )
         exec_id = exec["Id"]
 

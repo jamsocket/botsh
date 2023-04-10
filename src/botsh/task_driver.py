@@ -11,10 +11,10 @@ class TaskDriver:
     container: DockerContainer
     llm: LLM
 
-    def __init__(self, task: str, llm: LLM, wipe: bool = False):
+    def __init__(self, task: str, container: DockerContainer, llm: LLM):
         self.task = task
         self.llm = llm
-        self.container = DockerContainer("ubuntu:latest", wipe)
+        self.container = container
         self.history = list()
 
         # Run a few commands. These serve both to orient the agent, and to
@@ -42,7 +42,7 @@ class TaskDriver:
         result = parse_response(response)
         command = result.get("COMMAND", "")
         explanation = result.get("EXPLANATION", "")
-        
+
         log.info("AI responded.", command=command, explanation=explanation)
         if command == "":
             log.info("Task completed")

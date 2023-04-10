@@ -8,7 +8,7 @@ from botsh.prompt import generate_prompt
 
 
 class LLM:
-    def __init__(self, model: str = "text-davinci-003", save_transcript: bool = False):
+    def __init__(self, model, save_transcript: bool = False):
         self.model = model
         self.save_transcript = save_transcript
         self.count = 0
