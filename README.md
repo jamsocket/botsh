@@ -15,6 +15,12 @@ The AI is explicitly told that it is allowed to install software,
 and will typically install programs as needed to complete its task.
 Installed software remains confined to the container.
 
+## Demo
+
+This demo uses the prompt `create a sequence of 100 200x200 images which each contain a different number, and turn them into a 30fps video with ffmpeg`.
+
+https://user-images.githubusercontent.com/46173/230953506-c8545345-c0a1-46b1-b937-458191fc2456.mp4
+
 ## Setup
 
 Install with:
