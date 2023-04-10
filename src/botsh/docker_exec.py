@@ -20,20 +20,9 @@ class DockerContainer:
         self.container = self._get_container(container_name, image, wipe)
 
     def _get_mounts(self) -> list[Mount]:
-        mount = Mount(
-            target="/work", source=self.current_directory, type="bind", read_only=True
-        )
+        mount = Mount(target="/work", source=self.current_directory, type="bind")
 
-        output_dir = os.path.join(self.current_directory, "output")
-        os.makedirs(output_dir, exist_ok=True)
-        mount_output = Mount(
-            target="/output",
-            source=output_dir,
-            type="bind",
-            read_only=False,
-        )
-
-        return [mount, mount_output]
+        return [mount]
 
     def _get_container(self, container_name: str, image: str, wipe: bool):
         try:
@@ -71,10 +60,13 @@ class DockerContainer:
         container.start()
         return container
 
-    def run_command(self, command):
-        _, output = self.container.exec_run(
-            f"bash -c '{command}'", stream=True, workdir="/work"
+    def run_command(self, command: str) -> tuple[int, str]:
+        exec = self.client.api.exec_create(
+            self.container.id, f"bash -c '{command}'", workdir="/work"
         )
+        exec_id = exec["Id"]
+
+        output = self.client.api.exec_start(exec_id, stream=True)
 
         result = []
         for line in output:
@@ -82,7 +74,9 @@ class DockerContainer:
             print(colored(line, "green"), end="")
             result.append(line)
 
-        return "".join(result)
+        exit_code = self.client.api.exec_inspect(exec_id)["ExitCode"]
+
+        return exit_code, "".join(result)
 
     def __del__(self):
         if hasattr(self, "container"):

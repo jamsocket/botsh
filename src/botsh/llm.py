@@ -43,7 +43,7 @@ class LLM:
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
-            stop=["DONE", "RESULT:", "EXPLANATION:"],
+            stop=["DONE", "OUTPUT:", "EXPLANATION:"],
         )
 
         return response.choices[0].text

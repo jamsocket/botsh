@@ -3,7 +3,7 @@ from termcolor import colored
 from botsh.docker_exec import DockerContainer
 from botsh.history import CommandExecution
 from botsh.llm import LLM
-
+from botsh.prompt import parse_response
 
 class TaskDriver:
     history: list[CommandExecution]
@@ -31,25 +31,27 @@ class TaskDriver:
         )
 
     def run_command_and_add_to_history(self, explanation: str, command: str):
-        result = self.container.run_command(command)
-        self.history.append(CommandExecution(explanation, command, result))
-        return result
+        exit_code, output = self.container.run_command(command)
+        self.history.append(CommandExecution(explanation, command, output, exit_code))
+        return output
 
     def step(self):
         response = self.llm.completion(self.task, self.history)
         print(colored(response, "blue"))
 
-        explanation, command = response.split("COMMAND:")
-        command = command.strip()
-
+        result = parse_response(response)
+        command = result.get("COMMAND", "")
+        explanation = result.get("EXPLANATION", "")
+        if explanation != "":
+            print(colored(explanation, "yellow"))
         if command == "":
             print(colored("Task completed", "yellow"))
             return True
 
         print(colored("RESULT: ", "red"), end="")
 
-        result = self.container.run_command(command)
-        lines = result.splitlines()
+        exit_code, output = self.container.run_command(command)
+        lines = output.splitlines()
         if len(lines) > 10:
             truncated = len(lines) - 10
             result = (
@@ -58,4 +60,4 @@ class TaskDriver:
                 + "\n[...]\n"
             )
 
-        self.history.append(CommandExecution(explanation, command, result))
+        self.history.append(CommandExecution(explanation, command, output, exit_code))
