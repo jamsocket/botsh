@@ -1,9 +1,12 @@
+import hashlib
 import os
+import shlex
 
 import docker
 from docker.types import Mount
 from termcolor import colored
-import hashlib
+
+from botsh.logging import log
 
 
 class DockerContainer:
@@ -14,7 +17,7 @@ class DockerContainer:
         dir_hash = hashlib.sha256(self.current_directory.encode("utf-8")).hexdigest()
         container_name = f"botsh-{dir_hash}"
 
-        print(colored("Connecting to Docker...", "green"))
+        log.info("Connecting to Docker...")
         self.client = docker.from_env()
 
         self.container = self._get_container(container_name, image, wipe)
@@ -26,28 +29,28 @@ class DockerContainer:
 
     def _get_container(self, container_name: str, image: str, wipe: bool):
         try:
-            print(colored("Locating existing container...", "green"))
+            log.info("Locating existing container...")
             container = self.client.containers.get(container_name)
             if not wipe:
-                print(colored("Using existing container.", "green"))
+                log.info("Using existing container.")
                 if container.status != "running":
-                    print(colored("Starting container...", "green"))
+                    log.info("Starting container...")
                     container.start()
                 return container
             else:
-                print(colored("Terminating existing container.", "green"))
+                log.info("Terminating existing container.")
                 container.stop(timeout=0)
                 container.remove(force=True)
         except docker.errors.NotFound:
-            print(colored("No container exists, creating one.", "green"))
+            log.info("No container exists, creating one.")
             pass
 
-        print(colored("Pulling image...", "green"))
+        log.info("Pulling image...")
         self.client.images.pull(image)
 
         mounts = self._get_mounts()
 
-        print(colored("Creating container...", "green"))
+        log.info("Creating container...")
         container = self.client.containers.create(
             image,
             name=container_name,
@@ -56,13 +59,17 @@ class DockerContainer:
             mounts=mounts,
             environment=["DEBIAN_FRONTEND=noninteractive"],
         )
-        print(colored("Starting container...", "green"))
+        log.info("Starting container...")
         container.start()
+        log.info("Updating apt-get...")
+        self.container.run_command("apt-get -qq update")
         return container
 
-    def run_command(self, command: str) -> tuple[int, str]:
+    def run_command(self, command: str, quiet: bool = False) -> tuple[int, str]:
+        quoted_command = shlex.quote(command)
+
         exec = self.client.api.exec_create(
-            self.container.id, f"bash -c '{command}'", workdir="/work"
+            self.container.id, f"bash -c {quoted_command}", workdir="/work"
         )
         exec_id = exec["Id"]
 
@@ -71,7 +78,8 @@ class DockerContainer:
         result = []
         for line in output:
             line = line.decode("utf-8")
-            print(colored(line, "green"), end="")
+            if not quiet:
+                print(colored(line, "green"), end="")
             result.append(line)
 
         exit_code = self.client.api.exec_inspect(exec_id)["ExitCode"]
@@ -80,6 +88,6 @@ class DockerContainer:
 
     def __del__(self):
         if hasattr(self, "container"):
-            print(colored("Terminating container.", "green"))
+            log.info("Terminating container.")
             self.container.stop(timeout=0)
             # self.container.remove()

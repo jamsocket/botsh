@@ -1,9 +1,9 @@
-from termcolor import colored
-
 from botsh.docker_exec import DockerContainer
 from botsh.history import CommandExecution
 from botsh.llm import LLM
+from botsh.logging import log
 from botsh.prompt import parse_response
+
 
 class TaskDriver:
     history: list[CommandExecution]
@@ -15,8 +15,6 @@ class TaskDriver:
         self.task = task
         self.llm = llm
         self.container = DockerContainer("ubuntu:latest", wipe)
-        print(colored("Updating apt-get...", "green"))
-        self.container.run_command("apt-get -qq update")
         self.history = list()
 
         # Run a few commands. These serve both to orient the agent, and to
@@ -24,31 +22,31 @@ class TaskDriver:
         self.run_command_and_add_to_history(
             "I would like to know five files in the current directory.",
             "ls -al | head -n 5",
+            True,
         )
 
         self.run_command_and_add_to_history(
-            "I would like to know which directory I am in.", "pwd"
+            "I would like to know which directory I am in.", "pwd", True
         )
 
-    def run_command_and_add_to_history(self, explanation: str, command: str):
-        exit_code, output = self.container.run_command(command)
+    def run_command_and_add_to_history(
+        self, explanation: str, command: str, quiet: bool = False
+    ):
+        exit_code, output = self.container.run_command(command, quiet)
         self.history.append(CommandExecution(explanation, command, output, exit_code))
         return output
 
     def step(self):
         response = self.llm.completion(self.task, self.history)
-        print(colored(response, "blue"))
 
         result = parse_response(response)
         command = result.get("COMMAND", "")
         explanation = result.get("EXPLANATION", "")
-        if explanation != "":
-            print(colored(explanation, "yellow"))
+        
+        log.info("AI responded.", command=command, explanation=explanation)
         if command == "":
-            print(colored("Task completed", "yellow"))
+            log.info("Task completed")
             return True
-
-        print(colored("RESULT: ", "red"), end="")
 
         exit_code, output = self.container.run_command(command)
         lines = output.splitlines()

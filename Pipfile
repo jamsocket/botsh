@@ -8,6 +8,7 @@ docker = "*"
 openai = "*"
 termcolor = "*"
 jinja2 = "*"
+structlog = "*"
 
 [dev-packages]
 black = "*"
