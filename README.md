@@ -51,6 +51,10 @@ These observations relate to the default model, `text-davinci-003`. Using GPT-4 
   It is not good at figuring out what you mean.
 - It often gets stuck in loops if it can't complete a task rather than giving up, despite the prompt
   telling it not to.
+- It sometimes needs subtle encouragement to break a task down into multiple parts, instead of chaining together
+  a long shell command, particularly when the command it wants to run has a bug. For example, instead of
+  saying “convert foo.png to a gif and compute its md5 sum”, try “convert foo.png into a gif, and then compute
+  its md5 sum”
 
 ## Container re-use
 
