@@ -24,7 +24,15 @@ class DockerContainer:
         container_name = f"botsh-{dir_hash}"
 
         log.info("Connecting to Docker...")
-        self.client = docker.from_env()
+        try:
+            self.client = docker.from_env()
+        except PermissionError:
+            log.error(
+                "Permission error connecting to Docker. "
+                "You may need to follow these instructions: "
+                "https://docs.docker.com/engine/install/linux-postinstall/."
+            )
+            exit(1)
 
         self._get_container(container_name, image, wipe)
 

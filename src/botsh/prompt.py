@@ -7,7 +7,7 @@ ENV = Environment(loader=PackageLoader("botsh", "templates"))
 TEMPLATE = ENV.get_template("prompt.jinja2")
 
 PROMPT_TRAILER = "EXPLANATION:"
-
+COMMAND_TRAILER = "COMMAND:"
 
 def generate_prompt(task: str, history: list[CommandExecution]) -> str:
     return (
@@ -19,19 +19,25 @@ def generate_prompt(task: str, history: list[CommandExecution]) -> str:
     )
 
 
-def _parse_response(response: str):
-    response = PROMPT_TRAILER + response
-
-    for line in response.splitlines():
-        line = line.strip()
-        if line == "":
-            continue
-        try:
-            key, value = line.split(":", 1)
-            yield key.strip(), value.strip()
-        except ValueError:
-            log.warning("Response line does not contain a colon; ignoring.", line=line)
+class Response:
+    command = None
+    explanation = None
 
 
 def parse_response(response: str) -> dict[str, str]:
-    return dict(_parse_response(response))
+    lines = response.splitlines()
+    explanation = next(lines)
+
+    command = ""
+    command_line = next(lines)
+    if command_line.startswith(COMMAND_TRAILER):
+        command = command_line[len() + 1 :]
+    else:
+        log.warning(
+            "Expected a command, got this instead.", command_line=command_line
+        )
+
+    for line in lines:
+        command += line.strip()
+
+    return Response(command=command, explanation=explanation)

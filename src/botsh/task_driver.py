@@ -40,20 +40,21 @@ class TaskDriver:
         response = self.llm.completion(self.task, self.history)
 
         result = parse_response(response)
-        command = result.get("COMMAND", "")
-        explanation = result.get("EXPLANATION", "")
 
-        if command == "":
+        if result.command == "":
             log.info(
-                "Agent indicated that the task is complete.", explanation=explanation
+                "Agent indicated that the task is complete.",
+                explanation=result.explanation,
             )
             return True
         else:
             log.info(
-                "Agent requested a command.", command=command, explanation=explanation
+                "Agent requested a command.",
+                command=result.command,
+                explanation=result.explanation,
             )
 
-        exit_code, output = self.container.run_command(command)
+        exit_code, output = self.container.run_command(result.command)
         lines = output.splitlines()
         if len(lines) > 10:
             truncated = len(lines) - 10
@@ -63,4 +64,6 @@ class TaskDriver:
                 + "\n[...]\n"
             )
 
-        self.history.append(CommandExecution(explanation, command, output, exit_code))
+        self.history.append(
+            CommandExecution(result.explanation, result.command, output, exit_code)
+        )
