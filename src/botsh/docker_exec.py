@@ -26,7 +26,7 @@ class DockerContainer:
         log.info("Connecting to Docker...")
         try:
             self.client = docker.from_env()
-        except PermissionError:
+        except (PermissionError, ConnectionRefusedError):
             log.error(
                 "Permission error connecting to Docker. "
                 "You may need to follow these instructions: "
