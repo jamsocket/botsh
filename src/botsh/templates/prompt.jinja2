@@ -22,5 +22,5 @@ EXPLANATION: {{exec.explanation}}
 COMMAND: {{exec.command}}
 OUTPUT: {% if exec.result|length > 1024 %}[{{exec.result|length - 1024}} characters snipped]
 {{exec.result[-1024:]}}{% else %}{{exec.result}}{% endif %}
-EXIT CODE: {{exec.exit_code}} {% if exec.exit_code == 0 %}OK{% else %}FAIL{% endif %}
+EXIT_CODE: {{exec.exit_code}} {% if exec.exit_code == 0 %}OK{% else %}FAIL{% endif %}
 {% endfor %}

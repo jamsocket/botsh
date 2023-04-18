@@ -22,16 +22,20 @@ class LLM:
 
         if self.save_transcript:
             os.makedirs(transcript_dirname, exist_ok=True)
-            with open(os.path.join(transcript_dirname, "request.txt"), "w") as f:
+            with open(
+                os.path.join(transcript_dirname, "request.txt"), "w", encoding="utf-8"
+            ) as f:
                 f.write(prompt)
             self.count += 1
 
         response = self._completion(prompt)
 
         if self.save_transcript:
-            with open(os.path.join(transcript_dirname, "response.txt"), "w") as f:
+            with open(
+                os.path.join(transcript_dirname, "response.txt"), "w", encoding="utf-8"
+            ) as f:
                 f.write(response)
-        
+
         return response
 
     def _completion(self, prompt):
@@ -43,7 +47,7 @@ class LLM:
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
-            stop=["DONE", "OUTPUT:", "EXPLANATION:"],
+            stop=["DONE", "OUTPUT:", "EXPLANATION:", "EXIT_CODE:"],
         )
 
         return response.choices[0].text

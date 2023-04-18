@@ -30,10 +30,10 @@ class Response:
 
 def parse_response(response: str) -> dict[str, str]:
     lines = iter(response.splitlines())
-    explanation = next(lines)
+    explanation = next(lines, "")
 
     command = ""
-    command_line = next(lines)
+    command_line = next(lines, "")
     if command_line.startswith(COMMAND_TRAILER):
         command = command_line[len(COMMAND_TRAILER) + 1 :]
     else:
