@@ -25,14 +25,15 @@ class DockerContainer:
 
         log.info("Connecting to Docker...")
         try:
-            self.client = docker.from_env()
-        except (PermissionError, ConnectionRefusedError):
-            log.error(
+           self.client = docker.from_env()
+        except Exception as e:
+           log.error(
                 "Permission error connecting to Docker. "
+                "Is Docker running? "
                 "You may need to follow these instructions: "
-                "https://docs.docker.com/engine/install/linux-postinstall/."
-            )
-            exit(1)
+                "https://docs.docker.com/engine/install/linux-postinstall/.",
+           )
+           exit(1)
 
         self._get_container(container_name, image, wipe)
 

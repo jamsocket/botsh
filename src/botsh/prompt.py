@@ -20,18 +20,22 @@ def generate_prompt(task: str, history: list[CommandExecution]) -> str:
 
 
 class Response:
+    def __init__(self, command, explanation):
+        self.command = command
+        self.explanation = explanation
+    
     command = None
     explanation = None
 
 
 def parse_response(response: str) -> dict[str, str]:
-    lines = response.splitlines()
+    lines = iter(response.splitlines())
     explanation = next(lines)
 
     command = ""
     command_line = next(lines)
     if command_line.startswith(COMMAND_TRAILER):
-        command = command_line[len() + 1 :]
+        command = command_line[len(COMMAND_TRAILER) + 1 :]
     else:
         log.warning(
             "Expected a command, got this instead.", command_line=command_line
