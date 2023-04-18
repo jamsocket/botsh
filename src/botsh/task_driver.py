@@ -58,7 +58,7 @@ class TaskDriver:
         lines = output.splitlines()
         if len(lines) > 10:
             truncated = len(lines) - 10
-            result = (
+            output = (
                 f"[ {truncated} lines truncated ]"
                 + "\n".join(lines[-10:])
                 + "\n[...]\n"
