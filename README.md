@@ -11,6 +11,16 @@ universe, while limiting its blast radius to the current directory.
 
 This demo uses the prompt `create a sequence of 100 200x200 images which each contain a different number, and turn them into a 30fps video with ffmpeg`.
 
+`botsh`:
+
+- tries to run `imagemagick` and fails (because it is a fresh Ubuntu install)
+- installs `imagemagick`
+- attempts to run `ffmpeg` and fails
+- installs `ffmpeg`
+- attempts to turn frames into a video and fails (because it has not created them)
+- writes a bash for-loop to generate 100 frames with `imagemagick`
+- uses `ffmpeg` to convert them into a video
+
 https://user-images.githubusercontent.com/46173/230953506-c8545345-c0a1-46b1-b937-458191fc2456.mp4
 
 ## Setup
