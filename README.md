@@ -36,11 +36,11 @@ environment variable.
 
 ## Examples
 
-    # botsh "convert cat.jpg into a png file"
+    botsh "convert cat.jpg into a png file"
 
-    # botsh "use a remote service to find my public ip and base64 encode it"
+    botsh "use a remote service to find my public ip and base64 encode it"
 
-    # botsh "run pylint on the codebase in src/"
+    botsh "run pylint on the codebase in src/"
 
 ## Additional details
 
