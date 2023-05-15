@@ -5,6 +5,7 @@ import shlex
 import docker
 from docker.types import Mount
 from termcolor import colored
+import platform
 
 from botsh.logging import log
 
@@ -25,15 +26,15 @@ class DockerContainer:
 
         log.info("Connecting to Docker...")
         try:
-           self.client = docker.from_env()
+            self.client = docker.from_env()
         except Exception as e:
-           log.error(
-                "Permission error connecting to Docker. "
-                "Is Docker running? "
-                "You may need to follow these instructions: "
-                "https://docs.docker.com/engine/install/linux-postinstall/.",
-           )
-           exit(1)
+            log.error("Error connecting to Docker. Is Docker running?", err=e)
+            if platform.system() == "Linux":
+                log.info(
+                    "You may need to follow these instructions: "
+                    "https://docs.docker.com/engine/install/linux-postinstall/."
+                )
+            exit(1)
 
         self._get_container(container_name, image, wipe)
 
