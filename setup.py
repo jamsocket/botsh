@@ -22,7 +22,7 @@ def load_requirements_from_pipfile_lock(dev: bool):
 
 setup(
     name="botsh",
-    version="0.1.6",
+    version="0.1.7",
     description="A task runner powered by OpenAI and Docker.",
     long_description=long_description,
     long_description_content_type="text/markdown",
